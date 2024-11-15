@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up and Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.form-container {
+    width: 100%;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #495057;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-bottom: 15px;
+}
+
+p {
+    margin-top: 10px;
+    font-size: 0.875em;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#loginFormDiv {
+    display: none;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="signupFormDiv" class="form-container">
+            <h1>Log In</h1>
+            <form id="signupForm" onsubmit="return validateSignUpForm()">
+                <label for="signupUsername">Username:</label>
+                <input type="text" id="signupUsername" name="username" required>
+                <div id="signupUsernameError" class="error"></div>
+
+                <label for="signupPassword">Password:</label>
+                <input type="password" id="signupPassword" name="password" required>
+                <div id="signupPasswordError" class="error"></div>
+
+                <label for="signupConfirmPassword">Confirm Password:</label>
+                <input type="password" id="signupConfirmPassword" name="confirmPassword" required>
+                <div id="signupConfirmPasswordError" class="error"></div>
+
+                <input type="submit" value="Sign Up">
+                <p>Already have an account? <a href="#" onclick="switchToLoginForm()">Login here</a></p>
+            </form>
+        </div>
+
+        <div id="loginFormDiv" class="form-container">
+            <h1>Login</h1>
+            <form id="loginForm" onsubmit="return validateLoginForm()">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" name="username" required>
+                <div id="loginUsernameError" class="error"></div>
+
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" name="password" required>
+                <div id="loginPasswordError" class="error"></div>
+
+                <input type="submit" value="Login">
+                <p>Don't have an account? <a href="#" onclick="switchToSignUpForm()">Sign up here</a></p>
+                <p><mark>After getting logged in <b>CLICK ON<b></b> </mark><a href="ALL icons.html">Review all Platforms</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simple in-memory storage (not persistent and only for demo purposes)
+        const users = {};
+
+        function validateSignUpForm() {
+            const username = document.getElementById('signupUsername').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+            let valid = true;
+
+            // Clear previous errors
+            document.getElementById('signupUsernameError').innerText = '';
+            document.getElementById('signupPasswordError').innerText = '';
+            document.getElementById('signupConfirmPasswordError').innerText = '';
+
+            // Validate username
+            const usernamePattern = /^[a-zA-Z0-9]{3,15}$/;
+            if (!usernamePattern.test(username)) {
+                document.getElementById('signupUsernameError').innerText = 'Username must be 3-15 characters long and alphanumeric.';
+                valid = false;
+            } else if (users[username]) {
+                document.getElementById('signupUsernameError').innerText = 'Username already exists.';
+                valid = false;
+            }
+
+            // Validate password
+            if (password.length < 8) {
+                document.getElementById('signupPasswordError').innerText = 'Password must be at least 8 characters long.';
+                valid = false;
+            }
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                document.getElementById('signupConfirmPasswordError').innerText = 'Passwords do not match.';
+                valid = false;
+            }
+
+            if (valid) {
+                // Store the user (in-memory storage)
+                users[username] = password;
+                alert('Sign up successful!');
+                document.getElementById('signupForm').reset();
+                switchToLoginForm();
+            }
+
+            return false; // Prevent form submission for demo
+        }
+
+        function validateLoginForm() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            let valid = true;
+
+            // Clear previous errors
+            document.getElementById('loginUsernameError').innerText = '';
+            document.getElementById('loginPasswordError').innerText = '';
+
+            // Validate username and password
+            if (!users[username] || users[username] !== password) {
+                document.getElementById('loginUsernameError').innerText = 'Invalid username or password.';
+                valid = false;
+            }
+
+            if (valid) {
+                alert('Login successful!');
+                document.getElementById('loginForm').reset();
+            }
+
+            return false; // Prevent form submission for demo
+        }
+
+        function switchToLoginForm() {
+            document.getElementById('signupFormDiv').style.display = 'none';
+            document.getElementById('loginFormDiv').style.display = 'block';
+        }
+
+        function switchToSignUpForm() {
+            document.getElementById('loginFormDiv').style.display = 'none';
+            document.getElementById('signupFormDiv').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+    <div>
+        
+    </div>
